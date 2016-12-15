@@ -1,13 +1,16 @@
 import React from 'react';
 import AJAX from 'reqwest';
 class CarouselItems extends React.Component {
-   render() {console.log(this.props)
-   		var trimmedString = this.props.title.substr(0, 30);
+   render() {
+   		var trimmedString = this.props.title.substr(0, 20);
    		if(trimmedString!=this.props.title)
    			trimmedString= trimmedString+'...';
       return (
-        <div className={this.props.index==0 ? "item active" : "item"}>
-	      <img src={this.props.images[0].url == "" ? "./images/no-img.png": this.props.images[0].url} alt={this.props.title} />
+        <div className="item-item col-md-2 col-sm-4">
+        	<div className="ImageLink">
+		      <img className="ItemImage" src={this.props.images[0].url == "" ? "./images/no-img.png": this.props.images[0].url} alt={this.props.title} />
+		      <i className="OverlayIcon fa fa-play fa-3" aria-hidden="true"></i>
+	      	</div>
 	      <div className="carousel-caption">
 	       	{trimmedString}
 	      </div> 
@@ -21,6 +24,8 @@ class App extends React.Component {
 	    super(props);
 	    this.state = {
 	      data: [],
+	      dataHistory: [],
+	      isHistory: false
 	    };
 	}	
 	componentDidMount(){
@@ -34,6 +39,23 @@ class App extends React.Component {
 		        this.setState({data: resp.entries});
 		    }.bind(this)
 		});
+	}
+
+	prepareCarouselData(){
+		var prepareData = [];
+		var subItems = [];
+		var dataCarousel = this.state.isHistory ? this.state.dataHistory : this.state.data;
+		for(var i=0; i<dataCarousel.length; i++){
+			subItems.push(<CarouselItems key={dataCarousel[i]['id']} {...dataCarousel[i]}/>)
+			if(i%6 == 0){
+				prepareData.push(<div className={i==6 ? "item active":"item" }>{subItems}</div>);
+				subItems = [];
+			}
+		} 
+		if(subItems.length > 0){
+			prepareData.push(<div className={dataCarousel.length==5 ? "item active":"item" }>{subItems}</div>);
+		}
+		return prepareData.reverse();
 	}
 	
    	render() {
@@ -68,9 +90,7 @@ class App extends React.Component {
 
 							  <div className="carousel-inner" role="listbox">
 							    	{
-							    		this.state.data.map(function(v,i){v.index = i;
-							    			return (<CarouselItems key={v.id} {...v}/>)
-							    		})
+							    		this.prepareCarouselData()
 									}
 							  </div>
 
