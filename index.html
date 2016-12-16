@@ -34,10 +34,10 @@
 	}   
 
 	.carousel-control.left{
-	    margin-left: -195px;
+	    margin-left: -195px;z-index: 1;
 	}  
   .carousel-control.right {
-      margin-right: -181px;
+      margin-right: -181px;z-index: 1;
   }    
   .carousel-caption{        bottom: 0;
     color: black;
@@ -68,10 +68,18 @@
 .OverlayIcon {
     position: absolute;
     top: 34%;
-    left: 43%;
+    left: 35%;
     font-size: 50px;
-    color: black;cursor: pointer;
+    color: black;cursor: pointer;    opacity: 0.8;
+    background: wheat;
+    padding: 10px 10px 10px 21px;
+    border-radius: 38px;
 }
+.enlargeOuter {position: absolute;
+    }
+.enlarge{    padding-left: 0px;
+    padding-right: 0px;z-index:2;
+    position: fixed;}
 	</style>
   <body>
 	<div id="app">
