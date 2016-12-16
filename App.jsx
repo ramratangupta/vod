@@ -92,7 +92,7 @@ class App extends React.Component {
 						  </div>
 						  <div className="panel-body">
 						  <div style={{"textAlign":"center"}}>
-						    		<video autoPlay="autoplay" controls preload="auto" 
+						    		<video onEnded = {this.toggleVideo} autoPlay="autoplay" controls preload="auto" 
 								    	poster = {this.state.currentPlay.images[0].url == "" ? "./images/no-img.png": this.state.currentPlay.images[0].url} >
 								        	<source src={this.state.currentPlay.contents[0].url} type={"video/"+this.state.currentPlay.contents[0].format}
 								        	/>
