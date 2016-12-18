@@ -1,6 +1,6 @@
 import React from 'react';
 import AJAX from 'reqwest';
-
+import _ from 'underscore';
 class CarouselItems extends React.Component {
 	constructor(props) {
 	    super(props);
@@ -39,8 +39,16 @@ class App extends React.Component {
 	    };
 	    this.toggleVideo = this.toggleVideo.bind(this);
 	    this.updateCurrentPlay = this.updateCurrentPlay.bind(this);
+	    this.addToHistory = this.addToHistory.bind(this);
+	    this.toggleHistory = this.toggleHistory.bind(this);
+	    this.toggleHome = this.toggleHome.bind(this);
 	}
-
+	toggleHistory(){
+		this.setState({isHistory:true,preview_enlarge:false});
+	}
+	toggleHome(){
+		this.setState({isHistory:false,preview_enlarge:false});
+	}
 	toggleVideo(){
 		var preview_enlarge = !this.state.preview_enlarge;
 		this.setState({preview_enlarge:preview_enlarge});
@@ -49,8 +57,44 @@ class App extends React.Component {
 		this.setState({currentPlay:video});
 		this.toggleVideo();
 	}
+	addToHistory(){
+		var dataHistory =  this.state.dataHistory;
+		var currentPlay = this.state.currentPlay;debugger;
+		if(! (_.findIndex(dataHistory, { id: currentPlay.id }) != -1)){
+			dataHistory = dataHistory.concat(currentPlay);
+			this.setState({dataHistory:dataHistory});
+			var postData = {video_json:JSON.stringify(currentPlay),video_id:currentPlay.id}
+			AJAX({
+			    url: 'http://localhost/vod/addVideoToHistory.php'
+			    , type: 'json'
+			    , crossOrigin: true
+  				, withCredentials: true
+			    , method: 'post'
+			    , data: postData
+			    , error: function (err) {
+			        //console.log("Error while loading")
+			    }
+			    , success: function (resp) {
+			        //console.log(resp);
+			    }.bind(this)
+			});
 
+		}
+	}
 	componentDidMount(){
+		AJAX({
+		    url: 'http://localhost/vod/listhistory.php'
+		    , type: 'json'
+		    , crossOrigin: true
+  			, withCredentials: true
+		    , error: function (err) {
+		        //console.log("Error while loading")
+		    }
+		    , success: function (resp) {
+		    	this.setState({dataHistory: resp});
+		    }.bind(this)
+		});
+
    		AJAX({
 		    url: 'https://demo2697834.mockable.io/movies'
 		    , type: 'json'
@@ -61,6 +105,7 @@ class App extends React.Component {
 		        this.setState({data: resp.entries});
 		    }.bind(this)
 		});
+
 	}
 
 	prepareCarouselData(){
@@ -69,13 +114,13 @@ class App extends React.Component {
 		var dataCarousel = this.state.isHistory ? this.state.dataHistory : this.state.data;
 		for(var i=0; i<dataCarousel.length; i++){
 			subItems.push(<CarouselItems updateCurrentPlay={this.updateCurrentPlay} key={dataCarousel[i]['id']} {...dataCarousel[i]}/>)
-			if(i%6 == 0){
-				prepareData.push(<div className={i==6 ? "item active":"item" }>{subItems}</div>);
+			if(i>0 && i%5 == 0){
+				prepareData.push(<div className={i==5 ? "item active":"item" }>{subItems}</div>);
 				subItems = [];
 			}
-		} 
-		if(subItems.length > 0){
-			prepareData.push(<div className={dataCarousel.length==5 ? "item active":"item" }>{subItems}</div>);
+		}// debugger
+		if(subItems.length > 0 || dataCarousel.length <=5){
+			prepareData.push(<div className={dataCarousel.length <=5 ? "item active":"item" }>{subItems}</div>);
 		}
 		return prepareData.reverse();
 	}
@@ -92,7 +137,7 @@ class App extends React.Component {
 						  </div>
 						  <div className="panel-body">
 						  <div style={{"textAlign":"center"}}>
-						    		<video onEnded = {this.toggleVideo} autoPlay="autoplay" controls preload="auto" 
+						    		<video onPlay={this.addToHistory} onEnded = {this.toggleVideo} controls preload="auto" 
 								    	poster = {this.state.currentPlay.images[0].url == "" ? "./images/no-img.png": this.state.currentPlay.images[0].url} >
 								        	<source src={this.state.currentPlay.contents[0].url} type={"video/"+this.state.currentPlay.contents[0].format}
 								        	/>
@@ -122,8 +167,8 @@ class App extends React.Component {
 						</div>
 						<div id="navbar" className="collapse navbar-collapse">
 							  <ul className="nav navbar-nav">
-							    <li className="active"><a href="#">Home</a></li>
-							    <li><a href="#histroy">Histroy</a></li>
+							    <li className={this.state.isHistory == false ? "active" : null} onClick={this.toggleHome} ><a href="javascript:void(0);">Home</a></li>
+							    <li className={this.state.isHistory == true ? "active" : null} onClick={this.toggleHistory} ><a href="javascript:void(0);">Histroy</a></li>
 							  </ul>
 						</div>
 					</div>
