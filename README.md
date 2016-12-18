@@ -1,5 +1,13 @@
 # VOD application setup process
 ## Prerequisite
+```
+#Upgrade the system software for Ubuntu
+sudo apt-get update
+#Upgrade the software packages
+sudo apt-get upgrade
+#Clean all the apt-cache 
+sudo apt-get clean && sudo apt-get autoclean 
+```
 * Install git if not installed. 
 ```shellscript
 apt-get install git-all
