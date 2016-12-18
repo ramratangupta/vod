@@ -29,7 +29,7 @@ sudo apt-get install -V couchdb
 ```
 ## Setup process
 * If linux do, ```sudo echo "54.89.84.225 vodapplication.com www.vodapplication.com" >> /etc/hosts```
-* if windows do, add these entires in host file `54.89.84.225 vodapplication.com www.vodapplication.com` [modify-your-hosts-file](https://support.rackspace.com/how-to/modify-your-hosts-file/)
+* if windows do, add these entries in host file `54.89.84.225 vodapplication.com www.vodapplication.com` [modify-your-hosts-file](https://support.rackspace.com/how-to/modify-your-hosts-file/)
 * connect to EC2 ```ssh -i "vod.pem" ubuntu@ec2-54-89-84-225.compute-1.amazonaws.com```
 * configure EC2 for domain in /etc/nginx/sites-available/default
 ```
