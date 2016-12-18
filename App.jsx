@@ -65,7 +65,7 @@ class App extends React.Component {
 			this.setState({dataHistory:dataHistory});
 			var postData = {video_json:JSON.stringify(currentPlay),video_id:currentPlay.id}
 			AJAX({
-			    url: 'http://localhost/vod/addVideoToHistory.php'
+			    url: '/vod/addVideoToHistory.php'
 			    , type: 'json'
 			    , crossOrigin: true
   				, withCredentials: true
@@ -83,7 +83,7 @@ class App extends React.Component {
 	}
 	componentDidMount(){
 		AJAX({
-		    url: 'http://localhost/vod/listhistory.php'
+		    url: '/vod/listhistory.php'
 		    , type: 'json'
 		    , crossOrigin: true
   			, withCredentials: true
@@ -112,12 +112,14 @@ class App extends React.Component {
 		var prepareData = [];
 		var subItems = [];
 		var dataCarousel = this.state.isHistory ? this.state.dataHistory : this.state.data;
+		var j=1;
 		for(var i=0; i<dataCarousel.length; i++){
 			subItems.push(<CarouselItems updateCurrentPlay={this.updateCurrentPlay} key={dataCarousel[i]['id']} {...dataCarousel[i]}/>)
-			if(i>0 && i%5 == 0){
-				prepareData.push(<div className={i==5 ? "item active":"item" }>{subItems}</div>);
+			if(j%6 == 0){
+				prepareData.push(<div className={prepareData.length ==0 ? "item active":"item" }>{subItems}</div>);
 				subItems = [];
 			}
+			j++;
 		}// debugger
 		if(subItems.length > 0 || dataCarousel.length <=5){
 			prepareData.push(<div className={dataCarousel.length <=5 ? "item active":"item" }>{subItems}</div>);
@@ -180,7 +182,7 @@ class App extends React.Component {
 							data-ride="carousel" data-interval="false" 
 							data-wrap="true" data-keyboard="true">
 
-							  <div className="carousel-inner" role="listbox">
+							  <div className="carousel-inner" role="complementary">
 							    	{
 							    		this.prepareCarouselData()
 									}
