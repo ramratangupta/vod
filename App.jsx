@@ -106,7 +106,7 @@ class App extends React.Component {
 			this.setState({dataHistory:dataHistory});
 			var postData = {video_json:JSON.stringify(currentPlay),video_id:currentPlay.id}
 			AJAX({
-			    url: '/vod/addVideoToHistory.php'
+			    url: '/api/addVideoToHistory.php'
 			    , type: 'json'
 			    , crossOrigin: true
   				, withCredentials: true
@@ -123,7 +123,7 @@ class App extends React.Component {
 	}
 	componentDidMount(){
 		AJAX({
-		    url: '/vod/listhistory.php'
+		    url: '/api/listhistory.php'
 		    , type: 'json'
 		    , crossOrigin: true
   			, withCredentials: true
@@ -193,7 +193,7 @@ class App extends React.Component {
 		                </div>
 	                </div>
         		): null;
-        		
+
 		return (<div>
 				<nav className="navbar navbar-inverse navbar-fixed-top">
 					<div className="container">
