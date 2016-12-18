@@ -34,6 +34,7 @@ class App extends React.Component {
 	      data: [],
 	      dataHistory: [],
 	      isHistory: false,
+	      isVideoPlaying: false,
 	      preview_enlarge : false,
 	      currentPlay : {}
 	    };
@@ -42,9 +43,18 @@ class App extends React.Component {
 	    this.addToHistory = this.addToHistory.bind(this);
 	    this.toggleHistory = this.toggleHistory.bind(this);
 	    this.toggleHome = this.toggleHome.bind(this);
+	    this.playVideo = this.playVideo.bind(this);
+	    this.displayCustomPlayIcon = this.displayCustomPlayIcon.bind(this);
 	}
 	toggleHistory(){
 		this.setState({isHistory:true,preview_enlarge:false});
+	}
+	playVideo(e){
+		e.target.parentNode.firstElementChild.play();
+		this.setState({isVideoPlaying:true});
+	}
+	displayCustomPlayIcon(){
+		this.setState({isVideoPlaying:false});
 	}
 	toggleHome(){
 		this.setState({isHistory:false,preview_enlarge:false});
@@ -59,7 +69,8 @@ class App extends React.Component {
 	}
 	addToHistory(){
 		var dataHistory =  this.state.dataHistory;
-		var currentPlay = this.state.currentPlay;debugger;
+		var currentPlay = this.state.currentPlay;
+		this.setState({isVideoPlaying:true});
 		if(! (_.findIndex(dataHistory, { id: currentPlay.id }) != -1)){
 			dataHistory = dataHistory.concat(currentPlay);
 			this.setState({dataHistory:dataHistory});
@@ -138,12 +149,13 @@ class App extends React.Component {
 	                   			</span>
 						  </div>
 						  <div className="panel-body">
-						  <div style={{"textAlign":"center"}}>
-						    		<video onPlay={this.addToHistory} onEnded = {this.toggleVideo} controls preload="auto" 
+						  <div style={{"textAlign":"center"}} className="video-outer">
+						    		<video onPlay={this.addToHistory} onPause={this.displayCustomPlayIcon} onEnded = {this.toggleVideo} controls preload="auto" 
 								    	poster = {this.state.currentPlay.images[0].url == "" ? "./images/no-img.png": this.state.currentPlay.images[0].url} >
 								        	<source src={this.state.currentPlay.contents[0].url} type={"video/"+this.state.currentPlay.contents[0].format}
 								        	/>
 								    </video>
+								    {this.state.isVideoPlaying ? null : (<i className="OverlayIconplaypack fa fa-play fa-3" aria-hidden="true" onClick={this.playVideo}></i>) }
 							    </div>
 							
 							<div className="panel-footer">{this.state.currentPlay.description}</div>

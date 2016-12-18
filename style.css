@@ -1,7 +1,7 @@
 body {
   		padding-top: 50px;
 }   
-video{background: grey;}
+
 .carousel-control.left{
 	    margin-left: -195px;z-index: 1;
 }  
@@ -49,3 +49,21 @@ video{background: grey;}
 .enlarge{    padding-left: 0px;
     padding-right: 0px;z-index:2;
     position: fixed;}
+.video-outer {
+    height: auto;
+    position: relative;
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+}
+video{background: grey; height: auto;}
+.OverlayIconplaypack {
+    position: absolute;
+    top: 36%;
+    left: 45%;
+    font-size: 50px;
+    color: black;cursor: pointer;    opacity: 0.8;
+    background: wheat;
+    padding: 10px 10px 10px 21px;
+    border-radius: 38px;
+}
