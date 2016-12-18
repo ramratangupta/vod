@@ -1,29 +1,36 @@
+/**
+@author Ramratan Gupta
+*/
 import React from 'react';
 import AJAX from 'reqwest';
 import _ from 'underscore';
+/**
+An component to render carousel items using props, a stateless component.
+*/
 class CarouselItems extends React.Component {
 	constructor(props) {
 	    super(props);
 	    this.updateCurrentPlay = this.updateCurrentPlay.bind(this);
 	}
 	updateCurrentPlay(){
+		//return whole props to parrent to add in playback history.
 		this.props.updateCurrentPlay(this.props);
 	}
 	render() {
    		var trimmedString = this.props.title.substr(0, 20);
    		if(trimmedString!=this.props.title)
    			trimmedString= trimmedString+'...';
-      return  (
-        <div className="item-item col-md-2 col-sm-4">
-        	<div className="ImageLink" onClick = {this.updateCurrentPlay}>
+		return  (
+		<div className="item-item col-md-2 col-sm-4">
+			<div className="ImageLink" onClick = {this.updateCurrentPlay}>
 		      <img className="ItemImage" src={this.props.images[0].url == "" ? "./images/no-img.png": this.props.images[0].url} alt={this.props.title} />
 		      <i className="OverlayIcon fa fa-play fa-3" aria-hidden="true"></i>
-	      	</div>
-	      <div className="carousel-caption">
-	       	{trimmedString}
-	      </div> 
-    	</div>
-      );
+		  	</div>
+		  <div className="carousel-caption">
+		   	{trimmedString}
+		  </div> 
+		</div>
+		);
    }
 }
 
@@ -31,18 +38,41 @@ class App extends React.Component {
 	constructor(props) {
 	    super(props);
 	    this.state = {
-	      data: [],
-	      dataHistory: [],
-	      isHistory: false,
-	      isVideoPlaying: false,
-	      preview_enlarge : false,
-	      currentPlay : {}
+	      data: [],//will hold API response from video API 
+	      dataHistory: [],//will hold data of played video
+	      isHistory: false,//to add active class in top navigation and switch between history and main playlist
+	      isVideoPlaying: false,//will control the display of custom play icon on HTML5 video tag
+	      preview_enlarge : false,//will control the full screen video on APP
+	      currentPlay : {}// will JSON object of current video play and used in callback of CarouselItems component
 	    };
+	    /*
+	    	toggle full screen video
+	    */
 	    this.toggleVideo = this.toggleVideo.bind(this);
-	    this.updateCurrentPlay = this.updateCurrentPlay.bind(this);
+	    
+	    /*
+	    	set current currentPlay state varibale for current playing video.
+	    */
+    	this.updateCurrentPlay = this.updateCurrentPlay.bind(this);
+	    
+	    /*
+	    	will call API to persist data on server
+	    */
 	    this.addToHistory = this.addToHistory.bind(this);
+	    
+	    /*
+	    	add active class on top nav for History, and set video full play back to normal
+	    */
 	    this.toggleHistory = this.toggleHistory.bind(this);
+
+	    /*
+	    	add active class on top nav for Home, and set video full play back to normal
+	    */
 	    this.toggleHome = this.toggleHome.bind(this);
+	    
+	    /*
+	    	below two functions are used for display of custom icons
+	    */
 	    this.playVideo = this.playVideo.bind(this);
 	    this.displayCustomPlayIcon = this.displayCustomPlayIcon.bind(this);
 	}
@@ -89,7 +119,6 @@ class App extends React.Component {
 			        //console.log(resp);
 			    }.bind(this)
 			});
-
 		}
 	}
 	componentDidMount(){
@@ -116,7 +145,6 @@ class App extends React.Component {
 		        this.setState({data: resp.entries});
 		    }.bind(this)
 		});
-
 	}
 
 	prepareCarouselData(){
@@ -139,32 +167,33 @@ class App extends React.Component {
 	}
 	
    	render() {
-   	var video_playback = this.state.preview_enlarge ? (
-      			<div className="enlargeOuter">
-	            	<div className="col-md-12 col-xs-12 enlarge">
-	                	<div className="panel panel-default">
-						  <div className="panel-heading">
-						  		<span className="preview_text">{this.state.currentPlay.title}
-	        					<span className="glyphicon glyphicon-resize-small" aria-hidden="true" onClick={this.toggleVideo} style={{float:"right",cursor:'pointer',marginTop:'5px',fontSize:'14px'}}></span>
-	                   			</span>
-						  </div>
-						  <div className="panel-body">
-						  <div style={{"textAlign":"center"}} className="video-outer">
-						    		<video onPlay={this.addToHistory} onPause={this.displayCustomPlayIcon} onEnded = {this.toggleVideo} controls preload="auto" 
-								    	poster = {this.state.currentPlay.images[0].url == "" ? "./images/no-img.png": this.state.currentPlay.images[0].url} >
-								        	<source src={this.state.currentPlay.contents[0].url} type={"video/"+this.state.currentPlay.contents[0].format}
-								        	/>
-								    </video>
-								    {this.state.isVideoPlaying ? null : (<i className="OverlayIconplaypack fa fa-play fa-3" aria-hidden="true" onClick={this.playVideo}></i>) }
-							    </div>
-							
-							<div className="panel-footer">{this.state.currentPlay.description}</div>
-							
-						  </div>
-						</div>
+	   	var video_playback = this.state.preview_enlarge ? (
+	      			<div className="enlargeOuter">
+		            	<div className="col-md-12 col-xs-12 enlarge">
+		                	<div className="panel panel-default">
+							  <div className="panel-heading">
+							  		<span className="preview_text">{this.state.currentPlay.title}
+		        					<span className="glyphicon glyphicon-resize-small" aria-hidden="true" onClick={this.toggleVideo} style={{float:"right",cursor:'pointer',marginTop:'5px',fontSize:'14px'}}></span>
+		                   			</span>
+							  </div>
+							  <div className="panel-body">
+							  <div style={{"textAlign":"center"}} className="video-outer">
+							    		<video onPlay={this.addToHistory} onPause={this.displayCustomPlayIcon} onEnded = {this.toggleVideo} controls preload="auto" 
+									    	poster = {this.state.currentPlay.images[0].url == "" ? "./images/no-img.png": this.state.currentPlay.images[0].url} >
+									        	<source src={this.state.currentPlay.contents[0].url} type={"video/"+this.state.currentPlay.contents[0].format}
+									        	/>
+									    </video>
+									    {this.state.isVideoPlaying ? null : (<i className="OverlayIconplaypack fa fa-play fa-3" aria-hidden="true" onClick={this.playVideo}></i>) }
+								    </div>
+								
+								<div className="panel-footer">{this.state.currentPlay.description}</div>
+								
+							  </div>
+							</div>
+		                </div>
 	                </div>
-                </div>
-      ): null;
+        		): null;
+        		
 		return (<div>
 				<nav className="navbar navbar-inverse navbar-fixed-top">
 					<div className="container">
@@ -193,14 +222,9 @@ class App extends React.Component {
 						<div id="carousel-example-generic" className="carousel slide container" 
 							data-ride="carousel" data-interval="false" 
 							data-wrap="true" data-keyboard="true">
-
 							  <div className="carousel-inner" role="complementary">
-							    	{
-							    		this.prepareCarouselData()
-									}
+							    	{ this.prepareCarouselData() }
 							  </div>
-
-
 							  <a className="left carousel-control" href="#carousel-example-generic" 
 								role="button" data-slide="prev">
 							    <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
